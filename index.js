@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
 const port = process.env.PORT;
@@ -15,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use(notFound);
+app.use(errorHandler);
 
 mongoose
   .connect(MONGO_URI)
