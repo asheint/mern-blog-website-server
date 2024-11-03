@@ -1,9 +1,21 @@
 const { Router } = require("express");
 
+const {
+  registerUser,
+  loginUser,
+  getUser,
+  changeAvatar,
+  editUser,
+  getAuthors,
+} = require("../controller/userController");
+
 const router = Router();
 
-router.get("/", (req, res, next) => {
-  res.json("This is the user router");
-});
+router.post("/register", registerUser);
+router.post("/loging", loginUser);
+router.get("/:id", getUser);
+router.get("/", getAuthors);
+router.post("/change-avatar", changeAvatar);
+router.patch("/edit-user", editUser);
 
 module.exports = router;
