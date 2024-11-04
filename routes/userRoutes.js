@@ -12,7 +12,7 @@ const {
 const router = Router();
 
 router.post("/register", registerUser);
-router.post("/loging", loginUser);
+router.post("/login", loginUser);
 router.get("/:id", getUser);
 router.get("/", getAuthors);
 router.post("/change-avatar", changeAvatar);
