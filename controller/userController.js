@@ -79,14 +79,27 @@ const loginUser = async (req, res, next) => {
 // POST : api/users/:id
 // UNPROTECTED
 const getUser = async (req, res, next) => {
-  res.json("User Profile");
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return next(new HttpError("User not found.", 404));
+    }
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ==================== CHANGE USER AVATAR
 // POST : api/users/change-avatar
 // UNPROTECTED
 const changeAvatar = async (req, res, next) => {
-  res.json("Change user avatar");
+  try {
+    res.json(req.files);
+    console.log(req.files);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ==================== EDIT USER DETAILS (from profile)
@@ -100,7 +113,12 @@ const editUser = async (req, res, next) => {
 // POST : api/users/authors
 // UNPROTECTED
 const getAuthors = async (req, res, next) => {
-  res.json("Get all users/authors");
+  try {
+    const authors = await User.find().select("-password");
+    res.json(authors);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 module.exports = {
