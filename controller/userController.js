@@ -1,5 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 const User = require("../models/userModel");
 const HttpError = require("../models/errorModel");
 
@@ -95,8 +98,40 @@ const getUser = async (req, res, next) => {
 // UNPROTECTED
 const changeAvatar = async (req, res, next) => {
   try {
-    res.json(req.files);
-    console.log(req.files);
+    if (!req.files.avatar) {
+      return next(new HttpError("Please choose and image", 422));
+    }
+
+    // Find user from database
+    const user = await User.findById(req.user.id);
+
+    // Delete previous avatar
+    if (user.avatar) {
+      fs.unlink(path.join(__dirname, `../uploads/${user.avatar}`), (err) => {
+        if (err) {
+          return next(new HttpError(err));
+        }
+      });
+    }
+
+    const { avatar } = req.files;
+    // check file size
+    if (avatar.size > 500000) {
+      return next(new HttpError("Image size too large.", 422));
+    }
+    let fileName;
+    fileName = avatar.name;
+    let splittedFileName = fileName.split(".");
+    let newFileName =
+      splittedFileName[0] +
+      uuid() +
+      "." +
+      splittedFileName[splittedFileName - 1];
+    avatar.mv(path.join(__dirname, `../uploads/${newFileName}`), (err) => {
+      if (err) {
+        return next(new HttpError(err));
+      }
+    });
   } catch (error) {
     return next(new HttpError(error));
   }
