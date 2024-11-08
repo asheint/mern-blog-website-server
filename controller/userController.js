@@ -66,7 +66,7 @@ const loginUser = async (req, res, next) => {
     }
 
     const { _id: id, name } = user;
-    const token = jwt.sign({ id: name }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -124,7 +124,7 @@ const changeAvatar = async (req, res, next) => {
     let splittedFileName = fileName.split(".");
     let newFileName =
       splittedFileName[0] +
-      uuid() +
+      uuidv4() +
       "." +
       splittedFileName[splittedFileName - 1];
     avatar.mv(
