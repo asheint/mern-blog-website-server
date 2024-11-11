@@ -147,9 +147,9 @@ const editPost = async (req, res, next) => {
       // delete old thumbnail from upload
       fs.unlink(
         path.join(__dirname, "..", "uploads", oldPost.thumbnail),
-        async (err) => {
-          if (err) {
-            return next(new HttpError(err));
+        async (error) => {
+          if (error) {
+            return next(new HttpError(error));
           }
         }
       );
@@ -169,9 +169,9 @@ const editPost = async (req, res, next) => {
         splittedFileName[splittedFileName.length - 1];
       thumbnail.mv(
         path.join(__dirname, "..", "uploads", newFilename),
-        (async) => {
-          if (err) {
-            return next(new HttpError(err));
+        async (error) => {
+          if (error) {
+            return next(new HttpError(error));
           }
         }
       );
