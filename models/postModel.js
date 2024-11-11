@@ -15,7 +15,7 @@ const postSchema = new Schema(
         "Uncategorized",
         "Weather",
       ],
-      message: "{VALUE is not supported",
+      message: "VALUE is not supported",
     },
     description: { type: String, required: true },
     thumbnail: { type: String, required: true },

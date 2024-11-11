@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
+const { error } = require("console");
 
 // ============================= CREATE A POST
 // POST : api/posts
@@ -66,7 +67,12 @@ const createPost = async (req, res, next) => {
 // UNPROTECTED
 
 const getPosts = async (req, res, next) => {
-  res.json("Get all Posts");
+  try {
+    const posts = await Post.find().sort({ updatedAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ============================= GET SINGLEPOST
@@ -74,7 +80,16 @@ const getPosts = async (req, res, next) => {
 // UNPROTECTED
 
 const getPost = async (req, res, next) => {
-  res.json("Get single Post");
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(new HttpError("Post not found.", 404));
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ============================= GET POSY BY POST CATEGORY
@@ -82,7 +97,13 @@ const getPost = async (req, res, next) => {
 // UNPROTECTED
 
 const getCatPosts = async (req, res, next) => {
-  res.json("Get posts by category");
+  try {
+    const { category } = req.params;
+    const catPosts = await Post.find({ category }).sort({ createdAt: -1 });
+    res.status(200).json(catPosts);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ============================= GET USER/AUTHOR POST
@@ -90,7 +111,13 @@ const getCatPosts = async (req, res, next) => {
 // UNPROTECTED
 
 const getUserPosts = async (req, res, next) => {
-  res.json("Get user posts");
+  try {
+    const { id } = req.params;
+    const posts = await Post.find({ creator: id }).sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ============================= EDIT POST
@@ -98,7 +125,10 @@ const getUserPosts = async (req, res, next) => {
 // PROTECTED
 
 const editPost = async (req, res, next) => {
-  res.json("Edit post");
+  try {
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 };
 
 // ============================= DELETE POST
