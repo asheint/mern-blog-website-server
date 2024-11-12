@@ -31,7 +31,9 @@ app.use(errorHandler);
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    app.listen(port, () => console.log(`Server is running on port ${port}`));
+    app.listen(port || 5000, () =>
+      console.log(`Server is running on port ${port}`)
+    );
   })
   .catch((error) => {
     console.log(error);
