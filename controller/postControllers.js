@@ -199,7 +199,31 @@ const editPost = async (req, res, next) => {
 // PROTECTED
 
 const deletePost = async (req, res, next) => {
-  res.json("Delete post");
+  try {
+    const postId = req.params.id;
+    if (!postId) {
+      return next(new HttpError("Post not found", 404));
+    }
+    const post = await Post.findById(postId);
+    const fileName = post.thumbnail;
+
+    // Delete thumbnail from upload folder
+    fs.unlink(
+      path.join(__dirname, "..", "uploads", fileName),
+      async (error) => {
+        if (error) {
+          return next(new HttpError(error));
+        } else {
+          await Post.findByIdAndDelete(postId);
+          // find user and decrease post count by 1
+          const currentUser = await User.findById(req.user.id);
+          const userPostCount = currentUser.posts - 1;
+          await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+        }
+      }
+    );
+    res.status(200).json(`Post ${postId} deleted`);
+  } catch (error) {}
 };
 
 module.exports = {
