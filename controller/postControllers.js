@@ -162,10 +162,11 @@ const editPost = async (req, res, next) => {
         );
       }
       fileName = thumbnail.name;
-      let splittedFileName = fileName.split(",");
+      let splittedFileName = fileName.split(".");
       newFilename =
         splittedFileName[0] +
         uuid() +
+        "." +
         splittedFileName[splittedFileName.length - 1];
       thumbnail.mv(
         path.join(__dirname, "..", "uploads", newFilename),
