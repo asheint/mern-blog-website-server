@@ -206,23 +206,26 @@ const deletePost = async (req, res, next) => {
     }
     const post = await Post.findById(postId);
     const fileName = post.thumbnail;
-
-    // Delete thumbnail from upload folder
-    fs.unlink(
-      path.join(__dirname, "..", "uploads", fileName),
-      async (error) => {
-        if (error) {
-          return next(new HttpError(error));
-        } else {
-          await Post.findByIdAndDelete(postId);
-          // find user and decrease post count by 1
-          const currentUser = await User.findById(req.user.id);
-          const userPostCount = currentUser.posts - 1;
-          await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+    if (req.user.id == post.creator) {
+      // Delete thumbnail from upload folder
+      fs.unlink(
+        path.join(__dirname, "..", "uploads", fileName),
+        async (error) => {
+          if (error) {
+            return next(new HttpError(error));
+          } else {
+            await Post.findByIdAndDelete(postId);
+            // find user and decrease post count by 1
+            const currentUser = await User.findById(req.user.id);
+            const userPostCount = currentUser.posts - 1;
+            await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+            res.status(200).json(`Post ${postId} deleted`);
+          }
         }
-      }
-    );
-    res.status(200).json(`Post ${postId} deleted`);
+      );
+    } else {
+      return next(new HttpError("You are not authorized to delete this post"));
+    }
   } catch (error) {}
 };
 
