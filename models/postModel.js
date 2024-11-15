@@ -7,7 +7,8 @@ const postSchema = new Schema(
       type: String,
       enum: [
         "Agriculture",
-        "Business",
+        "Health",
+        "Bussiness",
         "Education",
         "Entertainment",
         "Art",
